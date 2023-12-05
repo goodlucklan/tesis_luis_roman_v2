@@ -20,6 +20,8 @@ import { bgGradient } from 'src/theme/css';
 import Logo from 'src/components/logo';
 import Iconify from 'src/components/iconify';
 
+import { useAuth } from '../../context/AuthContex';
+
 // ----------------------------------------------------------------------
 
 export default function LoginView() {
@@ -27,10 +29,21 @@ export default function LoginView() {
 
   const router = useRouter();
 
+  const { loginWithGoogle } = useAuth();
+
   const [showPassword, setShowPassword] = useState(false);
 
   const handleClick = () => {
     router.push('/');
+  };
+
+  const handleGoogleSignin = async () => {
+    try {
+      await loginWithGoogle();
+      router.push('/');
+    } catch (error) {
+      throw new Error(error);
+    }
   };
 
   const renderForm = (
@@ -110,6 +123,7 @@ export default function LoginView() {
               color="inherit"
               variant="outlined"
               sx={{ borderColor: alpha(theme.palette.grey[500], 0.16) }}
+              onClick={handleGoogleSignin}
             >
               <Iconify icon="flat-color-icons:google" />
             </Button>
