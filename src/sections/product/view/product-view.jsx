@@ -10,7 +10,7 @@ import Typography from '@mui/material/Typography';
 import TableContainer from '@mui/material/TableContainer';
 import TablePagination from '@mui/material/TablePagination';
 
-import { products } from 'src/_mock/product';
+// import { products } from 'src/_mock/product';
 
 import Iconify from 'src/components/iconify';
 import Scrollbar from 'src/components/scrollbar';
@@ -20,6 +20,7 @@ import TableEmptyRows from '../table-empty-rows';
 import ProductTableRow from '../product-table-row';
 import ProductTableHead from '../product-table-head';
 import ProductTableToolbar from '../product-table-toolbar';
+import useProductsData from '../../../hooks/use-products-data';
 import { emptyRows, applyFilter, getComparator } from '../utils';
 
 // ----------------------------------------------------------------------
@@ -36,6 +37,8 @@ export default function UserPage() {
   const [filterName, setFilterName] = useState('');
 
   const [rowsPerPage, setRowsPerPage] = useState(5);
+
+  const { data: products } = useProductsData();
 
   const handleSort = (event, id) => {
     const isAsc = orderBy === id && order === 'asc';
