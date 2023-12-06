@@ -1,3 +1,5 @@
+import { ProductView } from 'src/sections/product/view';
+
 export default function ProductsPage() {
-  return <h1>Products</h1>;
+  return <ProductView />;
 }
