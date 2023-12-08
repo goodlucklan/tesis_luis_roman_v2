@@ -1,35 +1,28 @@
-import { useState } from 'react';
+import PropTypes from 'prop-types';
+import { useState, useEffect } from 'react';
 
-import Card from '@mui/material/Card';
-import Stack from '@mui/material/Stack';
 import Table from '@mui/material/Table';
-import Button from '@mui/material/Button';
-import Container from '@mui/material/Container';
 import TableBody from '@mui/material/TableBody';
-import Typography from '@mui/material/Typography';
+import Container from '@mui/material/Container';
 import TableContainer from '@mui/material/TableContainer';
 import TablePagination from '@mui/material/TablePagination';
 
-// import { products } from 'src/_mock/product';
+// import { items } from 'src/_mock/product';
 
-import Iconify from 'src/components/iconify';
+import Card from '@mui/material/Card';
+
 import Scrollbar from 'src/components/scrollbar';
-import {
-  TableRow,
-  TableHead,
-  emptyRows,
-  TableNoData,
-  applyFilter,
-  TableToolbar,
-  getComparator,
-  TableEmptyRows,
-} from 'src/components/table';
 
-import useProductsData from '../../../hooks/use-products-data';
+import TableRow from './table-row';
+import TableHead from './table-head';
+import TableNoData from './table-no-data';
+import TableToolbar from './table-toolbar';
+import TableEmptyRows from './table-empty-rows';
+import { emptyRows, applyFilter, getComparator } from './utils';
 
 // ----------------------------------------------------------------------
 
-export default function UserPage() {
+export const DataTable = ({ headers, items, onEdit, onDelete, markRow }) => {
   const [page, setPage] = useState(0);
 
   const [order, setOrder] = useState('asc');
@@ -42,7 +35,15 @@ export default function UserPage() {
 
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
-  const { data: products } = useProductsData();
+  const [itemsForTable, setItemsForTable] = useState([]);
+
+  useEffect(() => {
+    const labels = [...headers.map((header) => header.id), 'id'];
+    const newItems = items.map((item) =>
+      Object.fromEntries(Object.entries(item).filter(([key]) => labels.includes(key)))
+    );
+    setItemsForTable(newItems);
+  }, [headers, items]);
 
   const handleSort = (event, id) => {
     const isAsc = orderBy === id && order === 'asc';
@@ -54,7 +55,7 @@ export default function UserPage() {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = products.map((n) => n.name);
+      const newSelecteds = itemsForTable.map((n) => n.name);
       setSelected(newSelecteds);
       return;
     }
@@ -94,7 +95,7 @@ export default function UserPage() {
   };
 
   const dataFiltered = applyFilter({
-    inputData: products,
+    inputData: itemsForTable,
     comparator: getComparator(order, orderBy),
     filterName,
   });
@@ -103,14 +104,6 @@ export default function UserPage() {
 
   return (
     <Container>
-      <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
-        <Typography variant="h4">Productos</Typography>
-
-        <Button variant="contained" color="inherit" startIcon={<Iconify icon="eva:plus-fill" />}>
-          Nuevo Producto
-        </Button>
-      </Stack>
-
       <Card>
         <TableToolbar
           numSelected={selected.length}
@@ -124,36 +117,32 @@ export default function UserPage() {
               <TableHead
                 order={order}
                 orderBy={orderBy}
-                rowCount={products.length}
+                rowCount={itemsForTable.length}
                 numSelected={selected.length}
                 onRequestSort={handleSort}
                 onSelectAllClick={handleSelectAllClick}
-                headLabel={[
-                  { id: 'name', label: 'Nombre' },
-                  { id: 'category', label: 'Categoría', align: 'center' },
-                  { id: 'unitCost', label: 'Costo Unitario', align: 'center' },
-                  { id: 'quantity', label: 'Cantidad', align: 'center' },
-                  { id: '' },
-                ]}
+                headLabel={headers}
+                markRow={markRow}
               />
               <TableBody>
                 {dataFiltered
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                  .map((row) => (
+                  .map((row, idx) => (
                     <TableRow
-                      key={row.id}
-                      name={row.name}
-                      category={row.category}
-                      unitCost={row.unitCost}
-                      quantity={row.quantity}
+                      key={idx}
+                      headLabel={headers}
+                      row={row}
                       selected={selected.indexOf(row.name) !== -1}
                       handleClick={(event) => handleClick(event, row.name)}
+                      handleEdit={onEdit}
+                      handleDelete={onDelete}
+                      markRow={markRow}
                     />
                   ))}
 
                 <TableEmptyRows
                   height={77}
-                  emptyRows={emptyRows(page, rowsPerPage, products.length)}
+                  emptyRows={emptyRows(page, rowsPerPage, itemsForTable.length)}
                 />
 
                 {notFound && <TableNoData query={filterName} />}
@@ -165,7 +154,7 @@ export default function UserPage() {
         <TablePagination
           page={page}
           component="div"
-          count={products.length}
+          count={itemsForTable.length}
           rowsPerPage={rowsPerPage}
           onPageChange={handleChangePage}
           rowsPerPageOptions={[5, 10, 25]}
@@ -174,4 +163,12 @@ export default function UserPage() {
       </Card>
     </Container>
   );
-}
+};
+
+DataTable.propTypes = {
+  headers: PropTypes.array,
+  items: PropTypes.array,
+  onEdit: PropTypes.func,
+  onDelete: PropTypes.func,
+  markRow:  PropTypes.bool
+};

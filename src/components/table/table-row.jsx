@@ -1,26 +1,25 @@
 import { useState } from 'react';
 import PropTypes from 'prop-types';
 
-import Stack from '@mui/material/Stack';
 import Popover from '@mui/material/Popover';
-import TableRow from '@mui/material/TableRow';
-import Checkbox from '@mui/material/Checkbox';
 import MenuItem from '@mui/material/MenuItem';
+import Checkbox from '@mui/material/Checkbox';
+import TableRow from '@mui/material/TableRow';
 import TableCell from '@mui/material/TableCell';
-import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 
 import Iconify from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
 
-export default function ProductTableRow({
+export default function GenericTableRow({
   selected,
-  name,
-  category,
-  unitCost,
-  quantity,
   handleClick,
+  row,
+  headLabel,
+  handleEdit,
+  handleDelete,
+  markRow,
 }) {
   const [open, setOpen] = useState(null);
 
@@ -35,23 +34,19 @@ export default function ProductTableRow({
   return (
     <>
       <TableRow hover tabIndex={-1} role="checkbox" selected={selected}>
-        <TableCell padding="checkbox">
-          <Checkbox disableRipple checked={selected} onChange={handleClick} />
-        </TableCell>
-
-        <TableCell component="th" scope="row" padding="none">
-          <Stack direction="row" alignItems="center" spacing={2}>
-            <Typography variant="subtitle2" noWrap>
-              {name}
-            </Typography>
-          </Stack>
-        </TableCell>
-
-        <TableCell align="center">{category}</TableCell>
-
-        <TableCell align="center">S/ {unitCost}</TableCell>
-
-        <TableCell align="center">{quantity}</TableCell>
+        {markRow && (
+          <TableCell padding="checkbox">
+            <Checkbox disableRipple checked={selected} onChange={handleClick} />
+          </TableCell>
+        )}
+        {Object.keys(row).map(
+          (value, idx) =>
+            value !== 'id' && (
+              <TableCell key={idx} align={headLabel[idx - 1].align || 'left'}>
+                {row[value]}
+              </TableCell>
+            )
+        )}
 
         <TableCell align="right">
           <IconButton onClick={handleOpenMenu}>
@@ -70,12 +65,23 @@ export default function ProductTableRow({
           sx: { width: 140 },
         }}
       >
-        <MenuItem onClick={handleCloseMenu}>
+        <MenuItem
+          onClick={() => {
+            handleEdit(row);
+            handleCloseMenu();
+          }}
+        >
           <Iconify icon="eva:edit-fill" sx={{ mr: 2 }} />
           Edit
         </MenuItem>
 
-        <MenuItem onClick={handleCloseMenu} sx={{ color: 'error.main' }}>
+        <MenuItem
+          onClick={() => {
+            handleDelete(row);
+            handleCloseMenu();
+          }}
+          sx={{ color: 'error.main' }}
+        >
           <Iconify icon="eva:trash-2-outline" sx={{ mr: 2 }} />
           Delete
         </MenuItem>
@@ -84,11 +90,12 @@ export default function ProductTableRow({
   );
 }
 
-ProductTableRow.propTypes = {
-  name: PropTypes.any,
-  category: PropTypes.any,
-  unitCost: PropTypes.any,
-  quantity: PropTypes.any,
+TableRow.propTypes = {
+  headLabel: PropTypes.array,
+  row: PropTypes.object,
   handleClick: PropTypes.func,
   selected: PropTypes.any,
+  handleEdit: PropTypes.func,
+  handleDelete: PropTypes.func,
+  markRow: PropTypes.bool,
 };

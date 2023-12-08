@@ -5,5 +5,7 @@ export const products = [...Array(10)].map((_, index) => ({
     name: faker.commerce.productName(),
     category: faker.commerce.productMaterial(),
     unitCost: faker.commerce.price(),
-    quantity: Math.floor(Math.random() * (40 - 10) + 10)
+    quantity: Math.floor(Math.random() * (40 - 10) + 10),
+    material: faker.commerce.productMaterial(),
+    isbn: faker.commerce.isbn()
   }));
