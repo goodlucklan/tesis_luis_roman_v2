@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import {
   Stack,
@@ -10,16 +10,18 @@ import {
   DialogContent,
 } from '@mui/material';
 
-import { products } from 'src/_mock/product';
-
 import Iconify from 'src/components/iconify';
 import { DataTable } from 'src/components/table';
 import { ProductForm } from 'src/components/form/product-form';
+
+import useProductsData from '../../hooks/use-products-data';
 
 export default function ProductsPage() {
   const [open, setOpen] = useState(false);
   const [defaultData, setDefaultData] = useState({});
   const [titleForm, setTitleForm] = useState('');
+  const { data } = useProductsData();
+  const products = useMemo(() => data, [data]);
 
   const headers = [
     { id: 'name', label: 'Nombre' },
@@ -29,16 +31,7 @@ export default function ProductsPage() {
     { id: '' },
   ];
 
-  const categoryList = [
-    'Bronze',
-    'Soft',
-    'Frozen',
-    'Concrete',
-    'Rubber',
-    'Granite',
-    'Steel',
-    'Cotton',
-  ];
+  const categoryList = ['vestido', 'tela'];
 
   const handleEdit = (payload) => {
     setTitleForm('Actualizar Producto');
