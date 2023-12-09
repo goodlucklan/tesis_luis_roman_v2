@@ -43,13 +43,13 @@ export default function AppView() {
             title="New Users"
             total={1352831}
             color="info"
-            icon={<img alt="icon" src="/assets/icons/glass/ic_glass_users.png" />}
+            icon={<img alt="icon" src="/assets/icons/glass/ic_glass_message.png" />}
           />
         </Grid>
 
         <Grid xs={12} sm={6} md={4}>
           <AppWidgetSummary
-            title="Item Orders"
+            title="Movimientos"
             total={sizeMoves}
             color="warning"
             icon={<img alt="icon" src="/assets/icons/glass/ic_glass_buy.png" />}

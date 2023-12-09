@@ -43,6 +43,7 @@ export const ProductForm = ({ categories, defaultData, handleCancel, handleSave 
       </FormControl>
       <FormControl>
         <TextField
+          type="number"
           name="unitCost"
           defaultValue={defaultData ? defaultData.unitCost : ''}
           label="Costo unitario"
@@ -51,6 +52,7 @@ export const ProductForm = ({ categories, defaultData, handleCancel, handleSave 
       </FormControl>
       <FormControl>
         <TextField
+          type="number"
           name="quantity"
           defaultValue={defaultData ? defaultData.quantity : ''}
           label="Cantidad"
