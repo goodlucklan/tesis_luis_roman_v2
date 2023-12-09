@@ -1,0 +1,32 @@
+export const inputsAndOutputs = [
+  {
+    id: 1,
+    product: 'Tela de algodon',
+    movementType: 'salida',
+    quantity: 20,
+    category: 'tela',
+    date: 'Sat Dec 02 2023',
+    location: 'almacen',
+    status: 'Aprobado',
+  },
+  {
+    id: 2,
+    product: 'Vestido Corte Imperial',
+    movementType: 'salida',
+    quantity: 10,
+    category: 'vestido',
+    date: 'Sat Dec 02 2023',
+    location: 'tienda',
+    status: 'Pendiente',
+  },
+  {
+    id: 3,
+    product: 'TELA DE CORDUROI',
+    movementType: 'salida',
+    quantity: 5,
+    category: 'tela',
+    date: 'Sat Dec 02 2023',
+    location: 'almacen',
+    status: 'Aprobado',
+  },
+];

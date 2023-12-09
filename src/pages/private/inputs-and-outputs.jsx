@@ -1,5 +1,7 @@
 import { Stack, Container, Typography } from '@mui/material';
 
+import { inputsAndOutputs } from 'src/_mock/input-and-ouptut';
+
 import { DataTable } from 'src/components/table';
 
 export default function InputsAndOutputsPage() {
@@ -10,15 +12,29 @@ export default function InputsAndOutputsPage() {
     { id: 'category', label: 'Categoría', align: 'center' },
     { id: 'date', label: 'Fecha', align: 'center' },
     { id: 'location', label: 'Locación', align: 'center' },
+    { id: 'status', label: 'Estado', align: 'center' },
     { id: '' },
   ];
+
+  const approveProduct = (product) => {
+    console.log('approveProduct: ', product);
+  };
+
+  const deleteProduct = (product) => {
+    console.log('deleteProduct: ', product);
+  };
 
   return (
     <Container>
       <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
         <Typography variant="h4">Entradas y Salidas</Typography>
       </Stack>
-      <DataTable headers={headers} items={[]} />
+      <DataTable
+        headers={headers}
+        items={inputsAndOutputs}
+        onApprove={approveProduct}
+        onDelete={deleteProduct}
+      />
     </Container>
   );
 }

@@ -10,6 +10,8 @@ import IconButton from '@mui/material/IconButton';
 
 import Iconify from 'src/components/iconify';
 
+import Label from '../label';
+
 // ----------------------------------------------------------------------
 
 export default function GenericTableRow({
@@ -17,6 +19,7 @@ export default function GenericTableRow({
   handleClick,
   row,
   headLabel,
+  handleApprove,
   handleEdit,
   handleDelete,
   markRow,
@@ -41,18 +44,25 @@ export default function GenericTableRow({
         )}
         {Object.keys(row).map(
           (value, idx) =>
-            value !== 'id' && (
+            value !== 'id' &&
+            (value === 'status' ? (
+              <TableCell key={idx} align={headLabel[idx - 1].align || 'left'}>
+                <Label color={(row[value] === 'Pendiente' && 'warning') || 'success'}>{row[value]}</Label>
+              </TableCell>
+            ) : (
               <TableCell key={idx} align={headLabel[idx - 1].align || 'left'}>
                 {row[value]}
               </TableCell>
-            )
+            ))
         )}
 
-        <TableCell align="right">
-          <IconButton onClick={handleOpenMenu}>
-            <Iconify icon="eva:more-vertical-fill" />
-          </IconButton>
-        </TableCell>
+        {(handleApprove || handleEdit || handleDelete) && (
+          <TableCell align="right">
+            <IconButton onClick={handleOpenMenu}>
+              <Iconify icon="eva:more-vertical-fill" />
+            </IconButton>
+          </TableCell>
+        )}
       </TableRow>
 
       <Popover
@@ -65,26 +75,43 @@ export default function GenericTableRow({
           sx: { width: 140 },
         }}
       >
-        <MenuItem
-          onClick={() => {
-            handleEdit(row);
-            handleCloseMenu();
-          }}
-        >
-          <Iconify icon="eva:edit-fill" sx={{ mr: 2 }} />
-          Edit
-        </MenuItem>
+        {handleApprove && (
+          <MenuItem
+            onClick={() => {
+              handleApprove(row);
+              handleCloseMenu();
+            }}
+            sx={{ color: 'green' }}
+          >
+            <Iconify icon="el:ok-circle" sx={{ mr: 2 }} />
+            Aprobar
+          </MenuItem>
+        )}
 
-        <MenuItem
-          onClick={() => {
-            handleDelete(row);
-            handleCloseMenu();
-          }}
-          sx={{ color: 'error.main' }}
-        >
-          <Iconify icon="eva:trash-2-outline" sx={{ mr: 2 }} />
-          Delete
-        </MenuItem>
+        {handleEdit && (
+          <MenuItem
+            onClick={() => {
+              handleEdit(row);
+              handleCloseMenu();
+            }}
+          >
+            <Iconify icon="eva:edit-fill" sx={{ mr: 2 }} />
+            Editar
+          </MenuItem>
+        )}
+
+        {handleDelete && (
+          <MenuItem
+            onClick={() => {
+              handleDelete(row);
+              handleCloseMenu();
+            }}
+            sx={{ color: 'error.main' }}
+          >
+            <Iconify icon="eva:trash-2-outline" sx={{ mr: 2 }} />
+            Eliminar
+          </MenuItem>
+        )}
       </Popover>
     </>
   );
@@ -95,6 +122,7 @@ TableRow.propTypes = {
   row: PropTypes.object,
   handleClick: PropTypes.func,
   selected: PropTypes.any,
+  handleApprove: PropTypes.func,
   handleEdit: PropTypes.func,
   handleDelete: PropTypes.func,
   markRow: PropTypes.bool,
