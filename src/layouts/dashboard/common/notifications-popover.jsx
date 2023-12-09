@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { useState, useEffect } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { doc, getDocs, updateDoc, collection } from 'firebase/firestore';
 
 import Box from '@mui/material/Box';
@@ -28,7 +28,7 @@ import { db } from '../../../firebase/firebase';
 
 export default function NotificationsPopover() {
   const [notifications, setNotifications] = useState([]);
-  const notifcationFirebase = collection(db, 'Notificaciones');
+  const notifcationFirebase = useMemo(() => collection(db, 'Notificaciones'), []);
 
   useEffect(() => {
     const getNotifications = async () => {

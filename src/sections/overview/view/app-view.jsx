@@ -14,14 +14,16 @@ const myMoves = collection(db, 'Movimiento');
 export default function AppView() {
   const [sizeProducts, setSizeProducts] = useState(0);
   const [sizeMoves, setSizeMoves] = useState(0);
+
   useEffect(() => {
-    getDocs(myProducts).then((snapShot) => {
-      const total = snapShot.size;
-      setSizeProducts(total);
-    });
-    getDocs(myMoves).then((snapshot) => {
-      setSizeMoves(snapshot.size);
-    });
+    Promise.all([getDocs(myProducts), getDocs(myMoves)])
+      .then(([productsSnapshot, movesSnapshot]) => {
+        setSizeProducts(productsSnapshot.size);
+        setSizeMoves(movesSnapshot.size);
+      })
+      .catch((error) => {
+        console.error('Error fetching data:', error);
+      });
   }, []);
 
   return (
