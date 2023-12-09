@@ -3,7 +3,6 @@ import { useState, useEffect } from 'react';
 
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
-import Container from '@mui/material/Container';
 import TableContainer from '@mui/material/TableContainer';
 import TablePagination from '@mui/material/TablePagination';
 
@@ -103,7 +102,6 @@ export const DataTable = ({ headers, items, onEdit, onDelete, markRow }) => {
   const notFound = !dataFiltered.length && !!filterName;
 
   return (
-    <Container>
       <Card>
         <TableToolbar
           numSelected={selected.length}
@@ -161,7 +159,6 @@ export const DataTable = ({ headers, items, onEdit, onDelete, markRow }) => {
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </Card>
-    </Container>
   );
 };
 
