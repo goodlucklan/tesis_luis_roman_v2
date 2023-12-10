@@ -21,7 +21,15 @@ import { emptyRows, applyFilter, getComparator } from './utils';
 
 // ----------------------------------------------------------------------
 
-export const DataTable = ({ headers, items, onApprove, onEdit, onDelete, markRow }) => {
+export const DataTable = ({
+  headers,
+  items,
+  onApprove,
+  onEdit,
+  onDelete,
+  markRow,
+  searchParameter,
+}) => {
   const [page, setPage] = useState(0);
 
   const [order, setOrder] = useState('asc');
@@ -94,6 +102,7 @@ export const DataTable = ({ headers, items, onApprove, onEdit, onDelete, markRow
   };
 
   const dataFiltered = applyFilter({
+    searchParameter,
     inputData: itemsForTable,
     comparator: getComparator(order, orderBy),
     filterName,
@@ -170,4 +179,5 @@ DataTable.propTypes = {
   onEdit: PropTypes.func,
   onDelete: PropTypes.func,
   markRow: PropTypes.bool,
+  searchParameter: PropTypes.string,
 };

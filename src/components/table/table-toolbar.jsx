@@ -33,7 +33,7 @@ export default function TableToolbar({ numSelected, filterName, onFilterName }) 
         <OutlinedInput
           value={filterName}
           onChange={onFilterName}
-          placeholder="Search user..."
+          placeholder="Buscar registro..."
           startAdornment={
             <InputAdornment position="start">
               <Iconify

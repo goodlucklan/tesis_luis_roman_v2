@@ -1,9 +1,10 @@
-export const inputsAndOutputs = [
+export const movements = [
   {
     id: 1,
     product: 'Tela de algodon',
     movementType: 'salida',
     quantity: 20,
+    reason: 'Razón del movimiento',
     category: 'tela',
     date: 'Sat Dec 02 2023',
     location: 'almacen',
@@ -14,6 +15,7 @@ export const inputsAndOutputs = [
     product: 'Vestido Corte Imperial',
     movementType: 'salida',
     quantity: 10,
+    reason: 'Razón del movimiento',
     category: 'vestido',
     date: 'Sat Dec 02 2023',
     location: 'tienda',
@@ -24,6 +26,7 @@ export const inputsAndOutputs = [
     product: 'TELA DE CORDUROI',
     movementType: 'salida',
     quantity: 5,
+    reason: 'Razón del movimiento',
     category: 'tela',
     date: 'Sat Dec 02 2023',
     location: 'almacen',

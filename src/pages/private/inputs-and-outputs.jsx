@@ -1,6 +1,6 @@
 import { Stack, Container, Typography } from '@mui/material';
 
-import { inputsAndOutputs } from 'src/_mock/input-and-ouptut';
+import { movements } from 'src/_mock/movements';
 
 import { DataTable } from 'src/components/table';
 
@@ -30,8 +30,9 @@ export default function InputsAndOutputsPage() {
         <Typography variant="h4">Entradas y Salidas</Typography>
       </Stack>
       <DataTable
+        searchParameter="product"
         headers={headers}
-        items={inputsAndOutputs}
+        items={movements}
         onApprove={approveProduct}
         onDelete={deleteProduct}
       />

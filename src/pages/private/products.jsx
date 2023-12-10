@@ -77,7 +77,13 @@ export default function ProductsPage() {
           Producto
         </Button>
       </Stack>
-      <DataTable headers={headers} items={products} onEdit={handleEdit} onDelete={handleDelete} />
+      <DataTable
+        searchParameter="name"
+        headers={headers}
+        items={products}
+        onEdit={handleEdit}
+        onDelete={handleDelete}
+      />
       <Dialog fullWidth onClose={handleClose} open={open}>
         <DialogTitle>{titleForm}</DialogTitle>
         <DialogContent style={{ paddingTop: 10 }}>
