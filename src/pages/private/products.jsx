@@ -1,4 +1,6 @@
 import { useMemo, useState } from 'react';
+import toast, { Toaster } from 'react-hot-toast';
+import { doc, addDoc, updateDoc, deleteDoc, collection } from 'firebase/firestore';
 
 import {
   Stack,
@@ -14,6 +16,7 @@ import Iconify from 'src/components/iconify';
 import { DataTable } from 'src/components/table';
 import { ProductForm } from 'src/components/form/product-form';
 
+import { db } from '../../firebase/firebase';
 import useProductsData from '../../hooks/use-products-data';
 
 export default function ProductsPage() {
@@ -31,6 +34,10 @@ export default function ProductsPage() {
     { id: '' },
   ];
 
+  const notify = () => toast.success('Producto agregado correctamente');
+  const notify2 = () => toast.success('Producto editado correctamente');
+  const notify3 = () => toast.error('Producto eliminado correctamente');
+
   const categoryList = ['vestido', 'tela'];
 
   const handleEdit = (payload) => {
@@ -39,8 +46,11 @@ export default function ProductsPage() {
     setOpen(true);
   };
 
-  const handleDelete = (payload) => {
-    console.log('Delete: ', payload);
+  const handleDelete = async (payload) => {
+    const productsRef = await collection(db, 'Productos');
+    const docRef = doc(productsRef, payload.id);
+    await deleteDoc(docRef);
+    notify3();
   };
 
   const handleClose = () => {
@@ -51,8 +61,39 @@ export default function ProductsPage() {
     setOpen(false);
   };
 
-  const addProduct = (payload) => {
-    console.log('addProduct: ', payload);
+  const addProduct = async (payload) => {
+    const productsRef = await collection(db, 'Productos');
+    if (titleForm === 'Nuevo Producto') {
+      await addDoc(productsRef, {
+        categoria: payload.category,
+        nombre: payload.name,
+        cantidad: payload.quantity,
+        costo: payload.unitCost,
+        descripcion: payload.description,
+        talla: '',
+        Usuario: {
+          nombre: '',
+          correo: '',
+        },
+      });
+      setOpen(false);
+      notify();
+    } else {
+      const docRef = await doc(productsRef, defaultData.id);
+      await updateDoc(docRef, {
+        categoria: payload.category,
+        nombre: payload.name,
+        cantidad: payload.quantity,
+        costo: payload.unitCost,
+        descripcion: payload.description,
+        Usuario: {
+          nombre: '',
+          correo: '',
+        },
+      });
+      setOpen(false);
+      notify2();
+    }
   };
 
   const clearDefaultData = () => {
@@ -61,6 +102,7 @@ export default function ProductsPage() {
 
   return (
     <Container>
+      <Toaster position="top-right" />
       <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
         <Typography variant="h4">Productos</Typography>
 
