@@ -9,7 +9,6 @@ export const LoginPage = lazy(() => import('src/pages/public/login'));
 /* Private Pages */
 export const IndexPage = lazy(() => import('src/pages/private/app'));
 export const InputsAndOutputsPage = lazy(() => import('src/pages/private/inputs-and-outputs'));
-export const MovementsPage = lazy(() => import('src/pages/private/movements'));
 export const ProductsPage = lazy(() => import('src/pages/private/products'));
 export const ReportPage = lazy(() => import('src/pages/private/report'));
 export const UsersPage = lazy(() => import('src/pages/private/users'));
@@ -31,8 +30,7 @@ export default function Router() {
       children: [
         { element: <IndexPage />, index: true },
         { path: 'productos', element: <ProductsPage /> },
-        { path: 'entradas-y-salidas', element: <InputsAndOutputsPage /> },
-        { path: 'movimientos', element: <MovementsPage /> },        
+        { path: 'entradas-y-salidas', element: <InputsAndOutputsPage /> },      
         { path: 'reporte', element: <ReportPage /> },
         { path: 'usuarios', element: <UsersPage /> },
       ],
