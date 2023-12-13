@@ -1,4 +1,7 @@
+import dayjs from 'dayjs';
 import { useMemo, useState } from 'react';
+import toast, { Toaster } from 'react-hot-toast';
+import { doc, addDoc, updateDoc, collection } from 'firebase/firestore';
 
 import {
   Stack,
@@ -10,18 +13,23 @@ import {
   DialogContent,
 } from '@mui/material';
 
-import { movements } from 'src/_mock/movements';
+import useMovimientoData from 'src/hooks/use-movement-data';
+
+// import { movements } from 'src/_mock/movements';
 
 import Iconify from 'src/components/iconify';
 import { DataTable } from 'src/components/table';
 import { MovementForm } from 'src/components/form/movement-form';
 
+import { db } from '../../firebase/firebase';
 import useProductsData from '../../hooks/use-products-data';
 
 export default function InputsAndOutputsPage() {
   const { data } = useProductsData();
+  const { data: Movimientos } = useMovimientoData();
   const products = useMemo(() => data, [data]);
-  // const productList = products.map((item) => item.name);
+  const movimientoTable = useMemo(() => Movimientos, [Movimientos]);
+  console.log(movimientoTable);
   const headers = [
     { id: 'product', label: 'Producto' },
     { id: 'movementType', label: 'Tipo de Movimiento', align: 'center' },
@@ -41,9 +49,23 @@ export default function InputsAndOutputsPage() {
   const [defaultData, setDefaultData] = useState({});
   const [actionType, setActionType] = useState('');
 
-  const approveProduct = (product) => {
-    console.log('approveProduct: ', product);
+  const approveProduct = async (product) => {
+    const MovesRef = await collection(db, 'Movimiento');
+
+    const docRef = await doc(MovesRef, product.id);
+
+    await updateDoc(docRef, {
+      aprobacion: 'Aprobado',
+    });
+    notifyCustom('Movimiento Aprobado');
   };
+
+  const notify = () => toast.success('Movimiento registrado correctamente');
+
+  const notify2 = () =>
+    toast.success('No puedes sacar mas productos de los que existen registrados');
+
+  const notifyCustom = (text) => toast.success(text);
 
   const deleteProduct = (product) => {
     console.log('deleteProduct: ', product);
@@ -72,12 +94,44 @@ export default function InputsAndOutputsPage() {
     setOpen(false);
   };
 
-  const addMovement = (payload) => {
-    console.log('addMovement: ', payload);
+  const addMovement = async (payload) => {
+    const MovesRef = await collection(db, 'Movimiento');
+    const foundItem = products.filter((item) => item.name === payload.product);
+    if (
+      payload.movementType === 'salida' &&
+      parseInt(payload.quantity, 10) > foundItem[0].quantity
+    ) {
+      notify2();
+      return;
+    }
+    const myProducts = await collection(db, 'Productos');
+    const docRef = await doc(myProducts, foundItem[0].id);
+    await addDoc(MovesRef, {
+      producto: payload.product,
+      Tipo_Movimiento: payload.movementType,
+      cantidad: payload.quantity,
+      fecha: dayjs().format('YYYY-MM-DD'),
+      locacion: payload.location,
+      motivo: payload.reason,
+      categoria: payload.category,
+      aprobacion: false,
+    });
+    if (payload.movementType === 'salida') {
+      await updateDoc(docRef, {
+        cantidad: `${foundItem[0].quantity - parseInt(payload.quantity, 10)}`,
+      });
+    } else {
+      await updateDoc(docRef, {
+        cantidad: `${foundItem[0].quantity + parseInt(payload.quantity, 10)}`,
+      });
+    }
+    notify();
+    setOpen(false);
   };
 
   return (
     <Container>
+      <Toaster position="top-right" />
       <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
         <Typography variant="h4">Entradas y Salidas</Typography>
         <Button
@@ -97,7 +151,7 @@ export default function InputsAndOutputsPage() {
       <DataTable
         searchParameter="product"
         headers={headers}
-        items={movements}
+        items={movimientoTable}
         onApprove={approveProduct}
         onDelete={deleteProduct}
       />
