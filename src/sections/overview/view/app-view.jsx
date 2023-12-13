@@ -14,12 +14,24 @@ const myMoves = collection(db, 'Movimiento');
 export default function AppView() {
   const [sizeProducts, setSizeProducts] = useState(0);
   const [sizeMoves, setSizeMoves] = useState(0);
+  const [totalCost, setTotalCost] = useState(0);
 
   useEffect(() => {
     Promise.all([getDocs(myProducts), getDocs(myMoves)])
       .then(([productsSnapshot, movesSnapshot]) => {
         setSizeProducts(productsSnapshot.size);
         setSizeMoves(movesSnapshot.size);
+        const productsData = productsSnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        const resultado = productsData.reduce((suma, result) => {
+          const cost = parseInt(result.costo, 10);
+          const cantidad = parseInt(result.cantidad, 10);
+          const product = cost * cantidad;
+          return suma + product;
+        }, 0);
+        setTotalCost(resultado);
       })
       .catch((error) => {
         console.error('Error fetching data:', error);
@@ -40,8 +52,8 @@ export default function AppView() {
 
         <Grid xs={12} sm={6} md={4}>
           <AppWidgetSummary
-            title="New Users"
-            total={1352831}
+            title="Costo Almacen"
+            total={totalCost}
             color="info"
             icon={<img alt="icon" src="/assets/icons/glass/ic_glass_message.png" />}
           />
