@@ -22,6 +22,17 @@ export const MovementForm = ({
     location: defaultData ? defaultData.location : '',
   });
 
+  const handleChangeProduct = (event) => {
+    if (event.target.name === 'product') {
+      const foundItem = products.filter((item) => item.name === event.target.value);
+      setFormData({
+        ...formData,
+        product: event.target.value,
+        category: foundItem[0].category,
+      });
+    }
+  };
+
   const handleChange = (event) => {
     setFormData({ ...formData, [event.target.name]: event.target.value });
   };
@@ -34,12 +45,12 @@ export const MovementForm = ({
           labelId="product"
           name="product"
           label="Producto"
-          onChange={handleChange}
+          onChange={handleChangeProduct}
           value={formData.product}
         >
           {products.map((product, idx) => (
-            <MenuItem key={idx} value={product}>
-              {product}
+            <MenuItem key={idx} value={product.name}>
+              {product.name}
             </MenuItem>
           ))}
         </Select>

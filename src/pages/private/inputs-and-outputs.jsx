@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import {
   Stack,
@@ -16,7 +16,12 @@ import Iconify from 'src/components/iconify';
 import { DataTable } from 'src/components/table';
 import { MovementForm } from 'src/components/form/movement-form';
 
+import useProductsData from '../../hooks/use-products-data';
+
 export default function InputsAndOutputsPage() {
+  const { data } = useProductsData();
+  const products = useMemo(() => data, [data]);
+  // const productList = products.map((item) => item.name);
   const headers = [
     { id: 'product', label: 'Producto' },
     { id: 'movementType', label: 'Tipo de Movimiento', align: 'center' },
@@ -28,12 +33,6 @@ export default function InputsAndOutputsPage() {
     { id: '' },
   ];
 
-  const productList = [
-    'Vestido Corte Imperial',
-    'Tela de algodon',
-    'TELA DE CORDUROI',
-    'vestido de noche',
-  ];
   const typesOfMovementsList = ['entrada', 'salida'];
   const locationList = ['tienda', 'almacen'];
 
@@ -107,7 +106,7 @@ export default function InputsAndOutputsPage() {
         <DialogContent style={{ paddingTop: 10 }}>
           <MovementForm
             actionType={actionType}
-            products={productList}
+            products={products}
             typesOfMovements={typesOfMovementsList}
             locations={locationList}
             defaultData={defaultData}
