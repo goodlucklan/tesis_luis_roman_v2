@@ -17,7 +17,7 @@ export default function ReportPage() {
   return (
     <Container>
       <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
-        <Typography variant="h4">Movimientos</Typography>
+        <Typography variant="h4">Kardex</Typography>
       </Stack>
       <DataTable searchParameter="product" headers={headers} items={movements} />
     </Container>

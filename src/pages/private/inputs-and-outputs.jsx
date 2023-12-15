@@ -1,7 +1,7 @@
 import dayjs from 'dayjs';
 import { useMemo, useState } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
-import { doc, addDoc, updateDoc, collection } from 'firebase/firestore';
+import { doc, addDoc, updateDoc, deleteDoc, collection } from 'firebase/firestore';
 
 import {
   Stack,
@@ -15,8 +15,6 @@ import {
 
 import useMovimientoData from 'src/hooks/use-movement-data';
 
-// import { movements } from 'src/_mock/movements';
-
 import Iconify from 'src/components/iconify';
 import { DataTable } from 'src/components/table';
 import { MovementForm } from 'src/components/form/movement-form';
@@ -29,7 +27,6 @@ export default function InputsAndOutputsPage() {
   const { data: Movimientos } = useMovimientoData();
   const products = useMemo(() => data, [data]);
   const movimientoTable = useMemo(() => Movimientos, [Movimientos]);
-  console.log(movimientoTable);
   const headers = [
     { id: 'product', label: 'Producto' },
     { id: 'movementType', label: 'Tipo de Movimiento', align: 'center' },
@@ -67,8 +64,17 @@ export default function InputsAndOutputsPage() {
 
   const notifyCustom = (text) => toast.success(text);
 
-  const deleteProduct = (product) => {
-    console.log('deleteProduct: ', product);
+  const deleteProduct = async (payload) => {
+    const MovesRef = await collection(db, 'Movimiento');
+    const foundItem = products.filter((item) => item.name === payload.product);
+    const myProducts = await collection(db, 'Productos');
+    const docRef = await doc(myProducts, foundItem[0].id);
+    await updateDoc(docRef, {
+      cantidad: `${foundItem[0].quantity + parseInt(payload.quantity, 10)}`,
+    });
+    const docRef2 = await doc(MovesRef, payload.id);
+    await deleteDoc(docRef2);
+    notifyCustom('Movimiento eliminado correctamente');
   };
 
   const handleClose = () => {
