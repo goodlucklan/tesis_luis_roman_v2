@@ -120,7 +120,7 @@ export default function InputsAndOutputsPage() {
       locacion: payload.location,
       motivo: payload.reason,
       categoria: payload.category,
-      aprobacion: false,
+      aprobacion: 'Pendiente',
     });
     if (payload.movementType === 'salida') {
       await updateDoc(docRef, {

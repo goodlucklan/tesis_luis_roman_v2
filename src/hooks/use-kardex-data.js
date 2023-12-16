@@ -13,8 +13,10 @@ const useMovimientoApprove = () => {
   useEffect(() => {
     const obtenerMovimientoconCostoAprobado = async () => {
       const movimientoSnapShot = await getDocs(movimientos);
+      const result = [];
       movimientoSnapShot.docs.map(async (movDoc) => {
         const movementData = movDoc.data();
+        console.log(movementData);
         const productoNombre = movementData.producto;
         const Products = await query(
           collection(db, 'Productos'),
@@ -24,7 +26,7 @@ const useMovimientoApprove = () => {
         if (!productSnapShot.empty) {
           const productoData = productSnapShot.docs[0].data();
           const { costo } = productoData;
-          const result = [];
+
           result.push({
             id: movDoc.id,
             product: movementData.producto,
@@ -35,7 +37,7 @@ const useMovimientoApprove = () => {
             category: movementData.categoria,
             location: movementData.locacion,
             date: movementData.fecha,
-            value: parseInt(movementData.cantidad, 10) * costo,
+            value: parseInt(movementData.cantidad, 10) * parseInt(costo, 10),
           });
           setData(result);
         }
