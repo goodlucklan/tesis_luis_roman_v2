@@ -21,7 +21,15 @@ import { emptyRows, applyFilter, getComparator } from './utils';
 
 // ----------------------------------------------------------------------
 
-export const DataTable = ({ headers, items, onEdit, onDelete, markRow }) => {
+export const DataTable = ({
+  headers,
+  items,
+  onApprove,
+  onEdit,
+  onDelete,
+  markRow,
+  searchParameter,
+}) => {
   const [page, setPage] = useState(0);
 
   const [order, setOrder] = useState('asc');
@@ -94,6 +102,7 @@ export const DataTable = ({ headers, items, onEdit, onDelete, markRow }) => {
   };
 
   const dataFiltered = applyFilter({
+    searchParameter,
     inputData: itemsForTable,
     comparator: getComparator(order, orderBy),
     filterName,
@@ -102,70 +111,73 @@ export const DataTable = ({ headers, items, onEdit, onDelete, markRow }) => {
   const notFound = !dataFiltered.length && !!filterName;
 
   return (
-      <Card>
-        <TableToolbar
-          numSelected={selected.length}
-          filterName={filterName}
-          onFilterName={handleFilterByName}
-        />
+    <Card>
+      <TableToolbar
+        numSelected={selected.length}
+        filterName={filterName}
+        onFilterName={handleFilterByName}
+      />
 
-        <Scrollbar>
-          <TableContainer sx={{ overflow: 'unset' }}>
-            <Table sx={{ minWidth: 800 }}>
-              <TableHead
-                order={order}
-                orderBy={orderBy}
-                rowCount={itemsForTable.length}
-                numSelected={selected.length}
-                onRequestSort={handleSort}
-                onSelectAllClick={handleSelectAllClick}
-                headLabel={headers}
-                markRow={markRow}
+      <Scrollbar>
+        <TableContainer sx={{ overflow: 'unset' }}>
+          <Table sx={{ minWidth: 800 }}>
+            <TableHead
+              order={order}
+              orderBy={orderBy}
+              rowCount={itemsForTable.length}
+              numSelected={selected.length}
+              onRequestSort={handleSort}
+              onSelectAllClick={handleSelectAllClick}
+              headLabel={headers}
+              markRow={markRow}
+            />
+            <TableBody>
+              {dataFiltered
+                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                .map((row, idx) => (
+                  <TableRow
+                    key={idx}
+                    headLabel={headers}
+                    row={row}
+                    selected={selected.indexOf(row.name) !== -1}
+                    handleClick={(event) => handleClick(event, row.name)}
+                    handleApprove={onApprove}
+                    handleEdit={onEdit}
+                    handleDelete={onDelete}
+                    markRow={markRow}
+                  />
+                ))}
+
+              <TableEmptyRows
+                height={77}
+                emptyRows={emptyRows(page, rowsPerPage, itemsForTable.length)}
               />
-              <TableBody>
-                {dataFiltered
-                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                  .map((row, idx) => (
-                    <TableRow
-                      key={idx}
-                      headLabel={headers}
-                      row={row}
-                      selected={selected.indexOf(row.name) !== -1}
-                      handleClick={(event) => handleClick(event, row.name)}
-                      handleEdit={onEdit}
-                      handleDelete={onDelete}
-                      markRow={markRow}
-                    />
-                  ))}
 
-                <TableEmptyRows
-                  height={77}
-                  emptyRows={emptyRows(page, rowsPerPage, itemsForTable.length)}
-                />
+              {notFound && <TableNoData query={filterName} />}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </Scrollbar>
 
-                {notFound && <TableNoData query={filterName} />}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </Scrollbar>
-
-        <TablePagination
-          page={page}
-          component="div"
-          count={itemsForTable.length}
-          rowsPerPage={rowsPerPage}
-          onPageChange={handleChangePage}
-          rowsPerPageOptions={[5, 10, 25]}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-        />
-      </Card>
+      <TablePagination
+        page={page}
+        component="div"
+        count={itemsForTable.length}
+        rowsPerPage={rowsPerPage}
+        onPageChange={handleChangePage}
+        rowsPerPageOptions={[5, 10, 25]}
+        onRowsPerPageChange={handleChangeRowsPerPage}
+      />
+    </Card>
   );
 };
 
 DataTable.propTypes = {
   headers: PropTypes.array,
   items: PropTypes.array,
+  onApprove: PropTypes.func,
   onEdit: PropTypes.func,
   onDelete: PropTypes.func,
-  markRow:  PropTypes.bool
+  markRow: PropTypes.bool,
+  searchParameter: PropTypes.string,
 };
