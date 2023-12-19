@@ -12,6 +12,7 @@ export const InputsAndOutputsPage = lazy(() => import('src/pages/private/inputs-
 export const ProductsPage = lazy(() => import('src/pages/private/products'));
 export const ReportPage = lazy(() => import('src/pages/private/report'));
 export const UsersPage = lazy(() => import('src/pages/private/users'));
+export const InventoryAccuracy = lazy(() => import('src/pages/private/inventory-accuracy'));
 
 export const Page404 = lazy(() => import('src/pages/page-not-found'));
 
@@ -30,9 +31,10 @@ export default function Router() {
       children: [
         { element: <IndexPage />, index: true },
         { path: 'productos', element: <ProductsPage /> },
-        { path: 'entradas-y-salidas', element: <InputsAndOutputsPage /> },      
+        { path: 'entradas-y-salidas', element: <InputsAndOutputsPage /> },
         { path: 'reporte', element: <ReportPage /> },
         { path: 'usuarios', element: <UsersPage /> },
+        { path: 'exactitud', element: <InventoryAccuracy /> },
       ],
     },
     {

@@ -32,6 +32,11 @@ const navConfig = [
     path: '/usuarios',
     icon: icon('ic_movement'),
   },
+  {
+    title: 'exactitud del inventario',
+    path: '/exactitud',
+    icon: icon('ic_movement'),
+  },
 ];
 
 export default navConfig;

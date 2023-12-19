@@ -16,7 +16,6 @@ const useMovimientoApprove = () => {
       const result = [];
       movimientoSnapShot.docs.map(async (movDoc) => {
         const movementData = movDoc.data();
-        console.log(movementData);
         const productoNombre = movementData.producto;
         const Products = await query(
           collection(db, 'Productos'),
