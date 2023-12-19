@@ -30,14 +30,19 @@ export default function ReportPage() {
         where('producto', '==', productSelected)
       );
       let saldo;
+      const cantidad_inicial = productFilter[0].quantity;
       const movimientoSnapShot = await getDocs(movimientos);
       const kardexTableMap = movimientoSnapShot.docs.map((movDoc, index) => {
         const productData = movDoc.data();
-
+        const cantidad = index > 0 ? saldo : cantidad_inicial;
         if (productData.Tipo_Movimiento === 'entrada') {
-          saldo = parseInt(productFilter[0].quantity, 10) + parseInt(productData.cantidad, 10);
+          saldo =
+            parseInt(index > 0 ? cantidad : cantidad_inicial, 10) +
+            parseInt(productData.cantidad, 10);
         } else {
-          saldo = parseInt(productFilter[0].quantity, 10) - parseInt(productData.cantidad, 10);
+          saldo =
+            parseInt(index > 0 ? cantidad : cantidad_inicial, 10) -
+            parseInt(productData.cantidad, 10);
         }
 
         return {
@@ -46,7 +51,7 @@ export default function ReportPage() {
           producto: productData.producto,
           motivo: productData.motivo,
           usuario: 'Leslie Torres',
-          cantidad: productFilter[0].quantity,
+          cantidad,
           entrada: productData.Tipo_Movimiento === 'entrada' ? productData.cantidad : '0',
           salida: productData.Tipo_Movimiento === 'salida' ? productData.cantidad : '0',
           saldo,
