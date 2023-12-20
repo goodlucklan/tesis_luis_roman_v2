@@ -5,6 +5,7 @@ import SvgColor from 'src/components/svg-color';
 const icon = (name) => (
   <SvgColor src={`/assets/icons/navbar/${name}.svg`} sx={{ width: 1, height: 1 }} />
 );
+const icon2 = (name) => <SvgColor src={`/assets/icons/${name}.svg`} sx={{ width: 1, height: 1 }} />;
 
 const navConfig = [
   {
@@ -36,6 +37,11 @@ const navConfig = [
     title: 'exactitud del inventario',
     path: '/exactitud',
     icon: icon('ic_movement'),
+  },
+  {
+    title: 'Pedidos',
+    path: '/pedidos',
+    icon: icon2('ic_notification_package'),
   },
 ];
 
