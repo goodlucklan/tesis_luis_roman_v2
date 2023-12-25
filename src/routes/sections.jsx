@@ -14,7 +14,8 @@ export const ReportPage = lazy(() => import('src/pages/private/report'));
 export const UsersPage = lazy(() => import('src/pages/private/users'));
 export const InventoryAccuracy = lazy(() => import('src/pages/private/inventory-accuracy'));
 export const Orders = lazy(() => import('src/pages/private/orders'));
-
+export const InventaryOpen = lazy(() => import('src/pages/private/inventory-open'));
+export const StockMedia = lazy(() => import('src/pages/private/stock-media'));
 export const Page404 = lazy(() => import('src/pages/page-not-found'));
 
 // ----------------------------------------------------------------------
@@ -37,6 +38,8 @@ export default function Router() {
         { path: 'usuarios', element: <UsersPage /> },
         { path: 'exactitud', element: <InventoryAccuracy /> },
         { path: 'pedidos', element: <Orders /> },
+        { path: 'inventario', element: <InventaryOpen /> },
+        { path: 'stock-media', element: <StockMedia /> },
       ],
     },
     {

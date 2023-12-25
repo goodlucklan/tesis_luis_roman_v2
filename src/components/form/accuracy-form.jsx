@@ -1,39 +1,17 @@
 import React, { useState } from 'react';
 
 import TextField from '@mui/material/TextField';
-import { Stack, Select, MenuItem, InputLabel, FormControl } from '@mui/material';
+import { Stack, Button, FormControl } from '@mui/material';
 
-const categoryList = ['vestido', 'tela'];
-
-export const AccuracyForm = ({ defaultData }) => {
+export const AccuracyForm = ({ defaultData, handleClose, handleSave }) => {
   const [formData, setFormData] = useState({
-    name: '',
-    category: '',
-    unitCost: '',
-    quantity: '',
-    description: '',
+    cantidad: '',
   });
   const handleChange = (event) => {
     setFormData({ ...formData, [event.target.name]: event.target.value });
   };
   return (
     <Stack spacing={3}>
-      <FormControl>
-        <InputLabel id="category">Producto</InputLabel>
-        <Select
-          labelId="category"
-          name="category"
-          defaultValue={defaultData ? defaultData.category : ''}
-          label="Categoría"
-          onChange={handleChange}
-        >
-          {categoryList.map((category, idx) => (
-            <MenuItem key={idx} value={category}>
-              {category}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
       <FormControl>
         <TextField
           name="cantidad"
@@ -43,6 +21,22 @@ export const AccuracyForm = ({ defaultData }) => {
           onChange={handleChange}
         />
       </FormControl>
+      <Stack
+        gap={2}
+        direction={{
+          xs: 'row-reverse',
+          sm: 'row',
+        }}
+        sx={{
+          flexShrink: 0,
+          alignSelf: { xs: 'flex-end', sm: 'flex-end' },
+        }}
+      >
+        <Button onClick={handleClose}>Cancelar</Button>
+        <Button onClick={() => handleSave(formData)} variant="contained">
+          Guardar
+        </Button>
+      </Stack>
     </Stack>
   );
 };

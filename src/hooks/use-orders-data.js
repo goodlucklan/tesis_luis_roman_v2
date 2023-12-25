@@ -17,8 +17,8 @@ const useOrdersData = () => {
           codigo: orderCount.codigo,
           producto: orderCount.producto,
           fecha: orderCount.fecha,
-          cantidad_solicitada: orderCount.cantidad_solicitada,
           cantidad_entregada: orderCount.cantidad_entregada,
+          cantidad_solicitada: orderCount.cantidad_solicitada,
           tasa_llenado: orderCount.tasa_llenado,
         };
       });

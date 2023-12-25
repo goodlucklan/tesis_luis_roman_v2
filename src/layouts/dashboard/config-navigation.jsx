@@ -43,6 +43,16 @@ const navConfig = [
     path: '/pedidos',
     icon: icon2('ic_notification_package'),
   },
+  {
+    title: 'Inventario',
+    path: '/inventario',
+    icon: icon2('ic_notification_shipping'),
+  },
+  {
+    title: 'stock promedio',
+    path: '/stock-media',
+    icon: icon2('ic_flag_en'),
+  },
 ];
 
 export default navConfig;
