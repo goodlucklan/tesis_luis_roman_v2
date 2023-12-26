@@ -35,7 +35,7 @@ const InventoryAccuracy = () => {
     { id: 'cantidad_fisica', label: 'Cantidad Fisica', align: 'center' },
     { id: 'cantidad', label: 'Cantidad Registrada', align: 'center' },
     { id: 'costo', label: 'Costo', align: 'center' },
-    { id: 'fecha', label: 'Fecha', align: 'center' },
+    { id: 'fecha_creacion', label: 'Fecha', align: 'center' },
     { id: 'exactitud', label: 'Exactitud del inventario', align: 'center' },
     { id: '' },
   ];

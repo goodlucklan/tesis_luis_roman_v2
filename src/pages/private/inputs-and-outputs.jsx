@@ -56,6 +56,7 @@ export default function InputsAndOutputsPage() {
   const [actionType, setActionType] = useState('');
   const [inventoryData, setInventoryData] = useState([]);
   const [productosData, setProductosData] = useState([]);
+  const [codeInventory, setCodeInventory] = useState('');
   const [movesData, setMovesData] = useState([]);
 
   useEffect(() => {
@@ -71,6 +72,7 @@ export default function InputsAndOutputsPage() {
   }, []);
 
   const getTableProductsByCode = async (code) => {
+    setCodeInventory(code);
     const productos = await query(products, where('codigo_inventario', '==', code));
     const productosSnapShot = await getDocs(productos);
     const productsTable = productosSnapShot.docs.map((productDoc) => ({
@@ -124,26 +126,6 @@ export default function InputsAndOutputsPage() {
           ? `${parseInt(cantidad_actualizada, 10) + parseInt(product.cantidad, 10)}`
           : `${parseInt(cantidad_actualizada, 10) - parseInt(product.cantidad, 10)}`,
     });
-    // await addDoc(kardexRef, {
-    //   producto: product.producto,
-    //   usuario: "Leslie Torres",
-    // })
-    // const MovesRef = await collection(db, 'Movimiento');
-    // const docRef = await doc(MovesRef, product.id);
-    // // const docRefPedido = await doc(pedidos, orders[0].id);
-    // await updateDoc(docRef, {
-    //   aprobacion: 'Aprobado',
-    // });
-    // const kardex = await collection(db, "Kardex");
-    // await addDoc(kardex, {
-
-    // })
-    // await updateDoc(docRefPedido, {
-    //   cantidad_entregada: product.quantity,
-    //   tasa_llenado: `${(
-    //     parseInt(product.quantity, 10) / parseInt(orders[0].cantidad_solicitada, 10)
-    //   ).toFixed(2)}`,
-    // });
     notifyCustom('Movimiento Aprobado');
   };
 
@@ -178,7 +160,7 @@ export default function InputsAndOutputsPage() {
     const MovesRef = await collection(db, 'Movimiento_Nuevo');
     await addDoc(MovesRef, {
       producto: payload.product,
-      codigo: inventoryData[0].codigo,
+      codigo: codeInventory,
       Tipo_Movimiento: payload.movementType,
       cantidad: payload.quantity,
       fecha: !payload.fecha ? dayjs().format('YYYY-MM-DD') : payload.fecha,

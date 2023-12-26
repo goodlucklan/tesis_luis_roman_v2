@@ -36,7 +36,7 @@ const navConfig = [
   {
     title: 'exactitud del inventario',
     path: '/exactitud',
-    icon: icon('ic_movement'),
+    icon: icon2('ic_accuaracy'),
   },
   {
     title: 'Pedidos',
@@ -52,6 +52,11 @@ const navConfig = [
     title: 'stock promedio',
     path: '/stock-media',
     icon: icon2('ic_flag_en'),
+  },
+  {
+    title: 'Rotacion de Inventarios',
+    path: '/rotacion-inventarios',
+    icon: icon2('ic-rotation'),
   },
 ];
 

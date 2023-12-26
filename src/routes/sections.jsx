@@ -17,6 +17,7 @@ export const Orders = lazy(() => import('src/pages/private/orders'));
 export const InventaryOpen = lazy(() => import('src/pages/private/inventory-open'));
 export const StockMedia = lazy(() => import('src/pages/private/stock-media'));
 export const Page404 = lazy(() => import('src/pages/page-not-found'));
+export const RotacionInventario = lazy(() => import('src/pages/private/rotation-inventory'));
 
 // ----------------------------------------------------------------------
 
@@ -40,6 +41,7 @@ export default function Router() {
         { path: 'pedidos', element: <Orders /> },
         { path: 'inventario', element: <InventaryOpen /> },
         { path: 'stock-media', element: <StockMedia /> },
+        { path: 'rotacion-inventarios', element: <RotacionInventario /> },
       ],
     },
     {
