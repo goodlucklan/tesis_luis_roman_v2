@@ -13,7 +13,7 @@ const navConfig = [
     icon: icon('ic_analytics'),
   },
   {
-    title: 'Poductos',
+    title: 'Productos',
     path: '/productos',
     icon: icon('ic_cart'),
   },
@@ -23,19 +23,14 @@ const navConfig = [
     icon: icon('ic_product'),
   },
   {
-    title: 'Movimientos',
-    path: '/movimientos',
-    icon: icon('ic_movement'),
-  },
-  {
     title: 'Reporte',
     path: '/reporte',
     icon: icon('ic_report'),
   },
   {
-    title: 'Usuarios',
+    title: 'Mapa',
     path: '/usuarios',
-    icon: icon('ic_user'),
+    icon: icon('ic_movement'),
   },
 ];
 
