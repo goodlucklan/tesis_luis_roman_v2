@@ -52,7 +52,7 @@ const InventoryAccuracy = () => {
       cantidad_fisica: payload.cantidad,
       cantidad: productSelected.cantidad,
       costo: productSelected.costo,
-      fecha_creacion: dayjs(productSelected.fecha).format('YYYY-MM-DD'),
+      fecha_creacion: dayjs(productSelected.fecha_creacion).format('YYYY-MM-DD'),
       fecha_actualizacion: dayjs().format('YYYY-MM-DD'),
       exactitud: `${(
         parseInt(payload.cantidad, 10) / parseInt(productSelected.cantidad, 10)
