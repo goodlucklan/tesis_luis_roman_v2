@@ -3,10 +3,7 @@ import { query, where, getDocs, collection } from 'firebase/firestore';
 
 import { db } from '../firebase/firebase';
 
-const movimientos = await query(
-  collection(db, 'Movimiento'),
-  where('aprobacion', '==', 'Aprobado')
-);
+const movimientos = query(collection(db, 'Movimiento'), where('aprobacion', '==', 'Aprobado'));
 
 const useMovimientoApprove = () => {
   const [data, setData] = useState([]);
