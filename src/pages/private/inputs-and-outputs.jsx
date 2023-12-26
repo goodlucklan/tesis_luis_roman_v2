@@ -1,39 +1,48 @@
 import dayjs from 'dayjs';
-import { useMemo, useState } from 'react';
+import { useState, useEffect } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
-import { doc, addDoc, updateDoc, deleteDoc, collection } from 'firebase/firestore';
+import {
+  doc,
+  query,
+  where,
+  addDoc,
+  getDocs,
+  updateDoc,
+  // deleteDoc,
+  collection,
+} from 'firebase/firestore';
 
 import {
   Stack,
   Button,
   Dialog,
+  Select,
+  MenuItem,
   Container,
   Typography,
+  InputLabel,
   DialogTitle,
+  FormControl,
   DialogContent,
 } from '@mui/material';
-
-import useMovimientoData from 'src/hooks/use-movement-data';
 
 import Iconify from 'src/components/iconify';
 import { DataTable } from 'src/components/table';
 import { MovementForm } from 'src/components/form/movement-form';
 
 import { db } from '../../firebase/firebase';
-import useProductsData from '../../hooks/use-products-data';
+
+const inventario = collection(db, 'Inventario_Apertura');
+const products = collection(db, 'Productos_Nuevos');
 
 export default function InputsAndOutputsPage() {
-  const { data } = useProductsData();
-  const { data: Movimientos } = useMovimientoData();
-  const products = useMemo(() => data, [data]);
-  const movimientoTable = useMemo(() => Movimientos, [Movimientos]);
   const headers = [
-    { id: 'product', label: 'Producto' },
-    { id: 'movementType', label: 'Tipo de Movimiento', align: 'center' },
-    { id: 'quantity', label: 'Cantidad', align: 'center' },
-    { id: 'category', label: 'Categoría', align: 'center' },
-    { id: 'date', label: 'Fecha', align: 'center' },
-    { id: 'location', label: 'Locación', align: 'center' },
+    { id: 'producto', label: 'Producto' },
+    { id: 'codigo_inventario', label: 'Codigo Inventario', align: 'center' },
+    { id: 'tipo_movimiento', label: 'Tipo de Movimiento', align: 'center' },
+    { id: 'cantidad', label: 'Cantidad', align: 'center' },
+    { id: 'fecha', label: 'Fecha', align: 'center' },
+    { id: 'locacion', label: 'Locación', align: 'center' },
     { id: 'status', label: 'Estado', align: 'center' },
     { id: '' },
   ];
@@ -45,43 +54,91 @@ export default function InputsAndOutputsPage() {
   const [titleForm, setTitleForm] = useState('');
   const [defaultData, setDefaultData] = useState({});
   const [actionType, setActionType] = useState('');
+  const [inventoryData, setInventoryData] = useState([]);
+  const [productosData, setProductosData] = useState([]);
+  const [codeInventory, setCodeInventory] = useState('');
+  const [movesData, setMovesData] = useState([]);
+
+  useEffect(() => {
+    const getInventory = async () => {
+      const inventarioSnapShot = await getDocs(inventario);
+      const inventarioSelect = inventarioSnapShot.docs.map((docky) => ({
+        id: docky.id,
+        codigo: docky.data().codigo,
+      }));
+      setInventoryData(inventarioSelect);
+    };
+    getInventory();
+  }, []);
+
+  const getTableProductsByCode = async (code) => {
+    setCodeInventory(code);
+    const productos = await query(products, where('codigo_inventario', '==', code));
+    const productosSnapShot = await getDocs(productos);
+    const productsTable = productosSnapShot.docs.map((productDoc) => ({
+      id: productDoc.id,
+      ...productDoc.data(),
+    }));
+    setProductosData(productsTable);
+    const moves = await query(collection(db, 'Movimiento_Nuevo'), where('codigo', '==', code));
+    const movesSnapShot = await getDocs(moves);
+    const movesTable = movesSnapShot.docs.map((productDoc) => ({
+      id: productDoc.id,
+      producto: productDoc.data().producto,
+      codigo_inventario: productDoc.data().codigo,
+      tipo_movimiento: productDoc.data().Tipo_Movimiento,
+      cantidad: productDoc.data().cantidad,
+      fecha: productDoc.data().fecha,
+      locacion: productDoc.data().locacion,
+      status: productDoc.data().aprobacion,
+    }));
+    setMovesData(movesTable);
+  };
 
   const approveProduct = async (product) => {
-    const MovesRef = await collection(db, 'Movimiento');
-
+    const kardexRef = await collection(db, 'Kardex');
+    const MovesRef = await collection(db, 'Movimiento_Nuevo');
     const docRef = await doc(MovesRef, product.id);
-
     await updateDoc(docRef, {
       aprobacion: 'Aprobado',
+    });
+    const filterDataProducts = productosData.filter((value) => value.nombre === product.producto);
+    const cantidad_actualizada = filterDataProducts[0].cantidad_actualizada
+      ? filterDataProducts[0].cantidad_actualizada
+      : filterDataProducts[0].cantidad;
+    const KardexADD = {
+      codigo_inventario: filterDataProducts[0].codigo_inventario,
+      producto: product.producto,
+      usuario: 'Leslie Torres',
+      cantidad_inicial: cantidad_actualizada,
+      entrada: product.tipo_movimiento === 'entrada' ? product.cantidad : 0,
+      salida: product.tipo_movimiento === 'salida' ? product.cantidad : 0,
+      saldo:
+        product.tipo_movimiento === 'entrada'
+          ? `${parseInt(cantidad_actualizada, 10) + parseInt(product.cantidad, 10)}`
+          : `${parseInt(cantidad_actualizada, 10) - parseInt(product.cantidad, 10)}`,
+    };
+    await addDoc(kardexRef, KardexADD);
+    const docProductRef = await doc(products, filterDataProducts[0].id);
+    await updateDoc(docProductRef, {
+      cantidad_actualizada:
+        product.tipo_movimiento === 'entrada'
+          ? `${parseInt(cantidad_actualizada, 10) + parseInt(product.cantidad, 10)}`
+          : `${parseInt(cantidad_actualizada, 10) - parseInt(product.cantidad, 10)}`,
     });
     notifyCustom('Movimiento Aprobado');
   };
 
-  const notify = () => toast.success('Movimiento registrado correctamente');
-
-  const notify2 = () =>
-    toast.success('No puedes sacar mas productos de los que existen registrados');
-
   const notifyCustom = (text) => toast.success(text);
 
-  const deleteProduct = async (payload) => {
-    const MovesRef = await collection(db, 'Movimiento');
-    const foundItem = products.filter((item) => item.name === payload.product);
-    const myProducts = await collection(db, 'Productos');
-    const docRef = await doc(myProducts, foundItem[0].id);
-    await updateDoc(docRef, {
-      cantidad: `${foundItem[0].quantity + parseInt(payload.quantity, 10)}`,
-    });
-    const docRef2 = await doc(MovesRef, payload.id);
-    await deleteDoc(docRef2);
-    notifyCustom('Movimiento eliminado correctamente');
-  };
+  const deleteProduct = async (payload) => {};
 
   const handleClose = () => {
     setOpen(false);
   };
 
   const editMovement = (product) => {
+    setOpen(true);
     console.log('approveProduct: ', product);
   };
 
@@ -91,7 +148,6 @@ export default function InputsAndOutputsPage() {
       movementType: '',
       quantity: '',
       reason: '',
-      category: '',
       location: '',
     });
   };
@@ -101,46 +157,50 @@ export default function InputsAndOutputsPage() {
   };
 
   const addMovement = async (payload) => {
-    const MovesRef = await collection(db, 'Movimiento');
-    const foundItem = products.filter((item) => item.name === payload.product);
-    if (
-      payload.movementType === 'salida' &&
-      parseInt(payload.quantity, 10) > foundItem[0].quantity
-    ) {
-      notify2();
-      return;
-    }
-    const myProducts = await collection(db, 'Productos');
-    const docRef = await doc(myProducts, foundItem[0].id);
+    const MovesRef = await collection(db, 'Movimiento_Nuevo');
     await addDoc(MovesRef, {
       producto: payload.product,
+      codigo: codeInventory,
       Tipo_Movimiento: payload.movementType,
       cantidad: payload.quantity,
-      fecha: dayjs().format('YYYY-MM-DD'),
+      fecha: !payload.fecha ? dayjs().format('YYYY-MM-DD') : payload.fecha,
       locacion: payload.location,
       motivo: payload.reason,
-      categoria: payload.category,
       aprobacion: 'Pendiente',
     });
-    if (payload.movementType === 'salida') {
-      await updateDoc(docRef, {
-        cantidad: `${foundItem[0].quantity - parseInt(payload.quantity, 10)}`,
-      });
-    } else {
-      await updateDoc(docRef, {
-        cantidad: `${foundItem[0].quantity + parseInt(payload.quantity, 10)}`,
-      });
-    }
-    notify();
     setOpen(false);
+    notifyCustom('Movimiento Aprobado');
   };
 
   return (
     <Container>
       <Toaster position="top-right" />
-      <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
-        <Typography variant="h4">Entradas y Salidas</Typography>
+      <Stack direction="column" alignItems="center" justifyContent="space-between" mb={5}>
+        <Typography variant="h4" mb={2}>
+          Entradas y Salidas
+        </Typography>
+        <FormControl
+          fullWidth
+          sx={{
+            marginBottom: 2,
+          }}
+        >
+          <InputLabel id="inventario">Inventario</InputLabel>
+          <Select
+            labelId="inventario"
+            name="inventario"
+            label="Inventario"
+            onChange={(e) => getTableProductsByCode(e.target.value)}
+          >
+            {inventoryData.map((inventory, idx) => (
+              <MenuItem key={idx} value={inventory.codigo}>
+                {inventory.codigo}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
         <Button
+          fullWidth
           onClick={() => {
             setTitleForm('Nuevo Movimiento');
             setActionType('CREATE');
@@ -155,10 +215,11 @@ export default function InputsAndOutputsPage() {
         </Button>
       </Stack>
       <DataTable
-        searchParameter="product"
+        searchParameter="nombre"
         headers={headers}
-        items={movimientoTable}
+        items={movesData}
         onApprove={approveProduct}
+        onEdit={editMovement}
         onDelete={deleteProduct}
       />
       <Dialog fullWidth onClose={handleClose} open={open}>
@@ -166,7 +227,7 @@ export default function InputsAndOutputsPage() {
         <DialogContent style={{ paddingTop: 10 }}>
           <MovementForm
             actionType={actionType}
-            products={products}
+            products={productosData}
             typesOfMovements={typesOfMovementsList}
             locations={locationList}
             defaultData={defaultData}

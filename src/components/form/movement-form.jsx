@@ -18,20 +18,21 @@ export const MovementForm = ({
     movementType: defaultData ? defaultData.movementType : '',
     quantity: defaultData ? defaultData.quantity : '',
     reason: defaultData ? defaultData.reason : '',
-    category: defaultData ? defaultData.category : '',
+    // category: defaultData ? defaultData.category : '',
+    fecha: defaultData ? defaultData.fecha : '',
     location: defaultData ? defaultData.location : '',
   });
 
-  const handleChangeProduct = (event) => {
-    if (event.target.name === 'product') {
-      const foundItem = products.filter((item) => item.name === event.target.value);
-      setFormData({
-        ...formData,
-        product: event.target.value,
-        category: foundItem[0].category,
-      });
-    }
-  };
+  // const handleChangeProduct = (event) => {
+  //   if (event.target.name === 'product') {
+  //     const foundItem = products.filter((item) => item.name === event.target.value);
+  //     setFormData({
+  //       ...formData,
+  //       product: event.target.value,
+  //       category: foundItem[0].category,
+  //     });
+  //   }
+  // };
 
   const handleChange = (event) => {
     setFormData({ ...formData, [event.target.name]: event.target.value });
@@ -45,12 +46,12 @@ export const MovementForm = ({
           labelId="product"
           name="product"
           label="Producto"
-          onChange={handleChangeProduct}
+          onChange={handleChange}
           value={formData.product}
         >
           {products.map((product, idx) => (
-            <MenuItem key={idx} value={product.name}>
-              {product.name}
+            <MenuItem key={idx} value={product.nombre}>
+              {product.nombre}
             </MenuItem>
           ))}
         </Select>
@@ -73,7 +74,7 @@ export const MovementForm = ({
       </FormControl>
       <FormControl>
         <TextField
-          type="text"
+          type="number"
           name="quantity"
           label="Cantidad"
           onChange={handleChange}
@@ -90,13 +91,7 @@ export const MovementForm = ({
         />
       </FormControl>
       <FormControl>
-        <TextField
-          type="text"
-          value={formData.category}
-          name="category"
-          label="Categoría"
-          disabled
-        />
+        <TextField type="date" name="fecha" onChange={handleChange} value={formData.fecha} />
       </FormControl>
       <FormControl>
         <InputLabel id="location">Locación</InputLabel>

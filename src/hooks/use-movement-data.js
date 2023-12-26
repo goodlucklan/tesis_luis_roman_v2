@@ -3,7 +3,7 @@ import { getDocs, collection } from 'firebase/firestore';
 
 import { db } from '../firebase/firebase';
 
-const myMoves = collection(db, 'Movimiento');
+const myMoves = collection(db, 'Movimiento_Nuevo');
 const useMovimientoData = () => {
   const [data, setData] = useState([]);
   useEffect(() => {
@@ -15,12 +15,12 @@ const useMovimientoData = () => {
       }));
       const filterlist = movimientoData.map((doc) => ({
         id: doc.id,
-        product: doc.producto,
-        movementType: doc.Tipo_Movimiento,
-        quantity: doc.cantidad,
-        category: doc.categoria,
-        date: doc.fecha,
-        location: doc.locacion,
+        producto: doc.producto,
+        codigo_inventario: doc.codigo,
+        tipo_movimiento: doc.Tipo_Movimiento,
+        cantidad: doc.cantidad,
+        fecha: doc.fecha,
+        locacion: doc.locacion,
         status: doc.aprobacion,
       }));
       setData(filterlist);
